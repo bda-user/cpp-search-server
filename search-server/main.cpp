@@ -8,10 +8,12 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <numeric>
 
 using namespace std;
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
+const double MAX_DELTA_RELEVANCE {1e-6};  // add after review
 
 string ReadLine() {
     string s;
@@ -40,7 +42,8 @@ vector<string> SplitIntoWords(const string& text) {
         if (c == ' ') {
             if (!word.empty()) {
                 if (!IsValidWord(word)) {
-                    throw invalid_argument("SplitIntoWords: string contain special char");
+                    // update after review
+                    throw invalid_argument("SplitIntoWords: '" + word + "' string contain special char");
                 }
                 words.push_back(word);
                 word.clear();
@@ -51,7 +54,8 @@ vector<string> SplitIntoWords(const string& text) {
     }
     if (!word.empty()) {
         if (!IsValidWord(word)) {
-            throw invalid_argument("SplitIntoWords: string contain special char");
+            // update after review
+            throw invalid_argument("SplitIntoWords: '" + word + "' string contain special char");
         }
         words.push_back(word);
     }
@@ -78,7 +82,8 @@ set<string> MakeUniqueNonEmptyStrings(const StringContainer& strings) {
     set<string> non_empty_strings;
     for (const string& str : strings) {
         if (!IsValidWord(str)) {
-            throw invalid_argument("MakeUniqueNonEmptyStrings: string contain special char");
+            // update after review
+            throw invalid_argument("MakeUniqueNonEmptyStrings: '" + str + "' string contain special char");
         }
         if (!str.empty()) {
             non_empty_strings.insert(str);
@@ -112,8 +117,11 @@ public:
 
     void AddDocument(int document_id, const string& document, DocumentStatus status,
                                    const vector<int>& ratings) {
-        if ((document_id < 0) || (documents_.count(document_id) > 0)) {
-            throw invalid_argument("AddDocument: id < 0 || double id");
+        if (document_id < 0) {
+            throw invalid_argument("AddDocument: id < 0");
+        }
+        if (documents_.count(document_id) > 0) {
+            throw invalid_argument("AddDocument: double id");
         }
         vector<string> words = SplitIntoWordsNoStop(document);
         const double inv_word_count = 1.0 / words.size();
@@ -130,7 +138,7 @@ public:
         auto matched_documents = FindAllDocuments(query, document_predicate);
 
         sort(matched_documents.begin(), matched_documents.end(), [](const Document& lhs, const Document& rhs) {
-            if (abs(lhs.relevance - rhs.relevance) < 1e-6) {
+            if (abs(lhs.relevance - rhs.relevance) < MAX_DELTA_RELEVANCE) {  // update after review
                 return lhs.rating > rhs.rating;
             } else {
                 return lhs.relevance > rhs.relevance;
@@ -219,11 +227,10 @@ private:
         if (ratings.empty()) {
             return 0;
         }
-        int rating_sum = 0;
-        for (const int rating : ratings) {
-            rating_sum += rating;
-        }
-        return rating_sum / static_cast<int>(ratings.size());
+        return static_cast<int> (
+                            accumulate(ratings.begin(), ratings.end(), 0) /  // update after review
+                            static_cast<int>(ratings.size())
+                       );
     }
 
     struct QueryWord {
