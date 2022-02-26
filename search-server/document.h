@@ -1,9 +1,7 @@
 #pragma once
+
 #include <iostream>
 #include <string>
-
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
 
 struct Document {
     Document() = default;
@@ -23,5 +21,3 @@ enum class DocumentStatus {
     BANNED,
     REMOVED,
 };
-
-#endif // DOCUMENT_H

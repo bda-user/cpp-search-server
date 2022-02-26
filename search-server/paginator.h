@@ -1,11 +1,9 @@
 #pragma once
+
 #include <utility>
 #include <iostream>
 #include <algorithm>
 #include <vector>
-
-#ifndef PAGINATOR_H
-#define PAGINATOR_H
 
 template <typename Iterator>
 class IteratorRange {
@@ -75,5 +73,3 @@ template <typename Container>
 auto Paginate(const Container& c, size_t page_size) {
     return Paginator(begin(c), end(c), page_size);
 }
-
-#endif // PAGINATOR_H

@@ -6,9 +6,6 @@
 
 #include "search_server.h"
 
-#ifndef REQUEST_QUEUE_H
-#define REQUEST_QUEUE_H
-
 class RequestQueue {
 public:
     explicit RequestQueue(const SearchServer& search_server);
@@ -33,5 +30,3 @@ private:
 
     void PushFindRequest(bool nores);
 };
-
-#endif // REQUEST_QUEUE_H
