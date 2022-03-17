@@ -50,15 +50,7 @@ void FindTopDocuments(const SearchServer& search_server, const string& raw_query
 void MatchDocuments(const SearchServer& search_server, const string& query) {
     try {
         cout << "Matching documents by query: "s << query << endl;
-/*
-        const int document_count = search_server.GetDocumentCount();
-        for (int index = 0; index < document_count; ++index) {
-            const int document_id = search_server.GetDocumentId(index);
-            const auto [words, status] = search_server.MatchDocument(query, document_id);
-            PrintMatchDocumentResult(document_id, words, status);
-        }
-*/
-        for (const int document_id : search_server) {
+        for (const auto document_id : search_server) {
             const auto [words, status] = search_server.MatchDocument(query, document_id);
             PrintMatchDocumentResult(document_id, words, status);
         }
@@ -96,7 +88,10 @@ int main()
     AddDocument(search_server, 9, "nasty rat with curly hair"s, DocumentStatus::ACTUAL, {1, 2});
 
     cout << "Before duplicates removed: "s << search_server.GetDocumentCount() << endl;
-    RemoveDuplicates(search_server);
+    {
+        LOG_DURATION("RemoveDuplicates");
+        RemoveDuplicates(search_server);
+    }
     cout << "After duplicates removed: "s << search_server.GetDocumentCount() << endl;
 
 /*
