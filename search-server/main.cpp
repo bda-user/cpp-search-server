@@ -119,7 +119,7 @@ vector<string> GenerateQueries(mt19937& generator, const vector<string>& diction
 }
 
 template <typename ExecutionPolicy>
-void Test(string_view mark, const SearchServer& search_server, const vector<string>& queries, ExecutionPolicy&& policy) {
+void Test1(string_view mark, const SearchServer& search_server, const vector<string>& queries, ExecutionPolicy&& policy) {
     LOG_DURATION(mark);
     double total_relevance = 0;
     for (const string_view query : queries) {
@@ -130,9 +130,9 @@ void Test(string_view mark, const SearchServer& search_server, const vector<stri
     cout << total_relevance << endl;
 }
 
-#define TEST(policy) Test(#policy, search_server, queries, execution::policy)
+#define TEST1(policy) Test1(#policy, search_server, queries, execution::policy)
 
-/*
+
 template <typename ExecutionPolicy>
 void Test(string_view mark, SearchServer search_server, const string& query, ExecutionPolicy&& policy) {
     LOG_DURATION(mark);
@@ -146,7 +146,7 @@ void Test(string_view mark, SearchServer search_server, const string& query, Exe
 }
 
 #define TEST(policy) Test(#policy, search_server, query, execution::policy)
-
+/*
 template <typename QueriesProcessor>
 void Test(string_view mark, QueriesProcessor processor, const SearchServer& search_server, const vector<string>& queries) {
     LOG_DURATION(mark);
@@ -172,6 +172,7 @@ void Test(string_view mark, SearchServer search_server, ExecutionPolicy&& policy
 
 int main() {
 
+cout << "FindTopDocuments"s << endl;
 {
     SearchServer search_server("and with"s);
 
@@ -237,11 +238,11 @@ int main() {
 
     const auto queries = GenerateQueries(generator, dictionary, 100, 70);
 
-    TEST(seq);
-    TEST(par);
+    TEST1(seq);
+    TEST1(par);
 }
-
-/*
+cout << endl;
+cout << "MatchDocument"s << endl;
     {
         //std::string_view stop_words("and with");
         SearchServer search_server(std::string_view("and with"));
@@ -309,7 +310,7 @@ int main() {
     mt19937 generator;
 
     const auto dictionary = GenerateDictionary(generator, 1000, 10);
-    const auto documents = GenerateQueries(generator, dictionary, 1'000, 70);
+    const auto documents = GenerateQueries(generator, dictionary, 10'000, 70);
 
     const string query = GenerateQuery(generator, dictionary, 500, 0.1);
 
@@ -320,7 +321,7 @@ int main() {
 
     TEST(seq);
     TEST(par);
-*/
+
     //SearchServer search_server("and with"s);
 /*
     AddDocument(search_server, 1, "funny pet and nasty rat"s, DocumentStatus::ACTUAL, {1, 2});

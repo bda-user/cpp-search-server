@@ -2,7 +2,7 @@
 
 using namespace std;
 
-vector<string_view> SplitIntoWords(const string_view& str) {
+vector<string_view> SplitIntoWords(const string_view str) {
 
     vector<string_view> result;
     int64_t pos = 0;
